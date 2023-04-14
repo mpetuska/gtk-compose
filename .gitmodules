@@ -1,0 +1,4 @@
+[submodule "gtk-kn"]
+	path = gtk-kn
+	url = git@github.com:gtk-kn/gtk-kn.git
+	branch = master
