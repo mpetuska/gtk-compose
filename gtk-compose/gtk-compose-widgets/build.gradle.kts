@@ -10,12 +10,10 @@ repositories {
 kotlin {
     explicitApi()
     linuxX64()
-
     sourceSets {
         named("linuxX64Main") {
             dependencies {
-                implementation("org.jetbrains.compose.runtime:runtime:1.4.0")
-                api("org.gtkkn:gtk")
+                api(project(":gtk-compose:gtk-compose-runtime"))
             }
         }
     }

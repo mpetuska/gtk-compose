@@ -1,0 +1,1 @@
+rootProject.name = "gtk-compose-gradle-plugin"

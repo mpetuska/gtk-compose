@@ -1,5 +1,6 @@
 plugins {
-    kotlin("multiplatform") version "1.8.20"
+    kotlin("multiplatform")
+    id("dev.petuska.gtk.compose")
 }
 
 repositories {
@@ -13,9 +14,11 @@ kotlin {
         }
     }
     sourceSets {
-        commonMain {
+        named("linuxX64Main") {
             dependencies {
+                implementation("org.jetbrains.compose.runtime:runtime:1.4.0")
                 implementation(project(":gtk-compose:gtk-compose-runtime"))
+                implementation(project(":gtk-compose:gtk-compose-widgets"))
             }
         }
     }

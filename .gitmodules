@@ -2,3 +2,7 @@
 	path = gtk-kn
 	url = git@github.com:gtk-kn/gtk-kn.git
 	branch = master
+[submodule "compose-multiplatform"]
+	path = compose-multiplatform
+	url = git@github.com:JetBrains/compose-multiplatform.git
+	branch = master
