@@ -1,4 +1,4 @@
-package dev.petuska.gtk.compose.samples.plain
+package dev.petuska.gtk.compose.samples.todo
 
 import org.gtkkn.bindings.gio.ApplicationFlags
 import org.gtkkn.bindings.gio.Settings
@@ -8,7 +8,7 @@ import org.gtkkn.bindings.gtk.*
 import kotlin.Unit
 
 
-private const val APP_ID = "dev.petuska.gtk.compose.samples.plain"
+private const val APP_ID = "dev.petuska.gtk.compose.samples.todo"
 
 fun main(vararg args: String) {
     val app = Application(APP_ID, ApplicationFlags.DEFAULT_FLAGS)
@@ -95,7 +95,7 @@ private fun switches() = DemoBox("Switches") {
 
 private fun lists() = DemoBox("Lists") {
     repeat(100) {
-        append(Label("#$it"))
+        append(Label("$it"))
     }
 }
 

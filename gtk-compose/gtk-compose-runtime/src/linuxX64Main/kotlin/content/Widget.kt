@@ -10,10 +10,10 @@ public typealias ContentBuilder<TWidget> = ScopeBuilder<WidgetScope<TWidget>>
 
 @Composable
 @ExplicitGroupsComposable
-private inline fun <TScope, TWidget> ComposeWidget(
-    crossinline factory: () -> TWidget,
+private inline fun <TScope, TNode> ComposeWidget(
+    crossinline factory: () -> TNode,
     widgetScope: TScope,
-    attrsSkippableUpdate: @Composable SkippableUpdater<TWidget>.() -> Unit,
+    attrsSkippableUpdate: @Composable SkippableUpdater<TNode>.() -> Unit,
     content: ScopeBuilder<TScope>
 ) {
     currentComposer.startNode()

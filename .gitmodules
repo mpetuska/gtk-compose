@@ -6,3 +6,11 @@
 	path = compose-multiplatform
 	url = git@github.com:JetBrains/compose-multiplatform.git
 	branch = master
+[submodule "mosaic"]
+	path = mosaic
+	url = git@github.com:JakeWharton/mosaic.git
+	branch = trunk
+[submodule "compose-multiplatform-core"]
+	path = compose-multiplatform-core
+	url = git@github.com:JetBrains/compose-multiplatform-core.git
+	branch = jb-main

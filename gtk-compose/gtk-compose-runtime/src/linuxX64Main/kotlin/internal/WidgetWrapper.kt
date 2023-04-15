@@ -31,18 +31,6 @@ public open class WidgetWrapper(public open val widget: Widget) {
     }
 
     public fun move(from: Int, to: Int, count: Int) {
-//        if (from == to) {
-//            return // nothing to do
-//        }
-//
-//        for (i in 0 until count) {
-//            // if "from" is after "to," the from index moves because we're inserting before it
-//            val fromIndex = if (from > to) from + i else from
-//            val toIndex = if (from > to) to + i else to + count - 2
-//
-//            val child = node.removeChild(node.childNodes[fromIndex]!!)
-//            node.insertBefore(child, node.childNodes[toIndex]!!)
-//        }
         if (from == to) {
             return // nothing to do
         }
@@ -60,7 +48,7 @@ public open class WidgetWrapper(public open val widget: Widget) {
 
     public fun clear() {
         children.forEach {
-            it.unparent()
+//            it.unparent()
         }
         children.clear()
     }

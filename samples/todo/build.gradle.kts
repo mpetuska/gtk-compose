@@ -10,7 +10,7 @@ repositories {
 kotlin {
     linuxX64 {
         binaries.executable {
-            entryPoint = "dev.petuska.gtk.compose.samples.plain.main"
+            entryPoint = "dev.petuska.gtk.compose.samples.todo.main"
         }
     }
     sourceSets {

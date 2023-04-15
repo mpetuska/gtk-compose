@@ -1,5 +1,7 @@
 package dev.petuska.gtk.compose.gradle.plugin
 
+import dev.petuska.gtk.compose.gradle.plugin.ext.compose
+import dev.petuska.gtk.compose.gradle.plugin.ext.gtk
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -10,10 +12,9 @@ class ComposeCompilerKotlinSupportPlugin : KotlinCompilerPluginSupportPlugin {
     override fun apply(target: Project) {
         super.apply(target)
         target.plugins.withType(ComposePlugin::class.java) {
-            val composeExt = target.extensions.getByType(ComposeExtension::class.java)
 
             composeCompilerArtifactProvider = ComposeCompilerArtifactProvider {
-                composeExt.kotlinCompilerPlugin.orNull
+                target.gtk.compose.kotlinCompilerPlugin.orNull
                     ?: ComposeCompilerCompatibility.compilerVersionFor(target.getKotlinPluginVersion())
             }
         }

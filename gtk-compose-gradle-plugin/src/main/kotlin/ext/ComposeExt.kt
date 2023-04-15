@@ -1,17 +1,12 @@
-package dev.petuska.gtk.compose.gradle.plugin
+package dev.petuska.gtk.compose.gradle.plugin.ext
 
-import dev.petuska.gtk.compose.gradle.plugin.utils.nullableProperty
-import org.gradle.api.Project
-import org.gradle.api.model.ObjectFactory
+import dev.petuska.gtk.compose.gradle.plugin.ComposePlugin
+import dev.petuska.gtk.compose.gradle.plugin.utils.maybeCreate
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import javax.inject.Inject
 
-abstract class ComposeExtension @Inject constructor(
-    objects: ObjectFactory,
-    project: Project
-) : ExtensionAware {
+interface ComposeExt : ExtensionAware {
     /**
      * Custom Compose Compiler maven coordinates. You can set it using values provided
      * by [ComposePlugin.CompilerDependencies]:
@@ -24,7 +19,7 @@ abstract class ComposeExtension @Inject constructor(
      * ```
      * (see available versions here: https://developer.android.com/jetpack/androidx/releases/compose-kotlin#pre-release_kotlin_compatibility)
      */
-    val kotlinCompilerPlugin: Property<String?> = objects.nullableProperty()
+    val kotlinCompilerPlugin: Property<String?>
 
     /**
      * List of the arguments applied to the Compose Compiler. Example:
@@ -34,7 +29,15 @@ abstract class ComposeExtension @Inject constructor(
      * See all available arguments here:
      * https://github.com/androidx/androidx/blob/androidx-main/compose/compiler/compiler-hosted/src/main/java/androidx/compose/compiler/plugins/kotlin/ComposePlugin.kt
      */
-    val kotlinCompilerPluginArgs: ListProperty<String> = objects.listProperty(String::class.java)
-
-    val dependencies = ComposePlugin.Dependencies(project)
+    val kotlinCompilerPluginArgs: ListProperty<String>
 }
+
+internal inline val ComposeExt.dependencies
+    get() = extensions.maybeCreate<ComposePlugin.Dependencies>("dependencies") {
+
+    }
+
+internal val GtkExt.compose
+    get() = extensions.maybeCreate<ComposeExt>("compose") {
+
+    }

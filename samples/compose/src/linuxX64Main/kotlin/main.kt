@@ -1,6 +1,7 @@
 package dev.petuska.gtk.compose.samples.compose
 
 import dev.petuska.gtk.compose.runtime.renderComposable
+import dev.petuska.gtk.compose.widgets.Box
 import dev.petuska.gtk.compose.widgets.Button
 import org.gtkkn.bindings.gio.ApplicationFlags
 import org.gtkkn.bindings.gtk.Application
@@ -18,8 +19,10 @@ fun main(vararg args: String) {
 }
 
 private fun Application.buildComposeUI() = renderComposable {
-    Button { }
-    Button { }
+    Box {
+        Button { }
+        Button { }
+    }
 }
 
 private fun Application.buildUI() {

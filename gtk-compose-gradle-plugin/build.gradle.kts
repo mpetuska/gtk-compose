@@ -15,14 +15,20 @@ repositories {
 
 
 pluginBundle {
-    website = "https://github.com/mpetuska/${rootProject.name}"
-    vcsUrl = "https://github.com/mpetuska/${rootProject.name}.git"
+    website = "https://github.com/mpetuska/gtk-compose"
+    vcsUrl = "https://github.com/mpetuska/gtk-compose.git"
     tags = listOf("ui-framework")
 }
 
 gradlePlugin {
     plugins {
-        register(name) {
+        register("gtk") {
+            id = "dev.petuska.gtk"
+            displayName = "GTK Gradle Plugin"
+            description = "GTK Gradle plugin for easy configuration"
+            implementationClass = "dev.petuska.gtk.compose.gradle.plugin.GtkPlugin"
+        }
+        register("compose") {
             id = "dev.petuska.gtk.compose"
             displayName = "GTK Compose Gradle Plugin"
             description = "GTK Compose Gradle plugin for easy configuration"

@@ -2,26 +2,29 @@
 
 package dev.petuska.gtk.compose.gradle.plugin
 
+import dev.petuska.gtk.compose.gradle.plugin.ext.compose
+import dev.petuska.gtk.compose.gradle.plugin.ext.gtk
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ComponentMetadataContext
 import org.gradle.api.artifacts.ComponentMetadataRule
 import org.gradle.api.artifacts.dsl.ComponentModuleMetadataHandler
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.kotlin.dsl.create
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 internal val composeVersion get() = BuildConfig.composeVersion
 
 class ComposePlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        val composeExtension = project.extensions.create("compose", ComposeExtension::class.java, project)
+        project.plugins.apply(GtkPlugin::class.java)
+        project.plugins.apply(ComposeCompilerKotlinSupportPlugin::class.java)
 //        val desktopExtension = composeExtension.extensions.create("desktop", DesktopExtension::class.java)
 //        val androidExtension = composeExtension.extensions.create("android", AndroidExtension::class.java)
 //        val experimentalExtension = composeExtension.extensions.create("experimental", ExperimentalExtension::class.java)
 //
-        project.dependencies.extensions.add("compose", Dependencies(project))
+        project.dependencies.extensions.create<Dependencies>("compose")
 //
 //        if (!project.buildFile.endsWith(".gradle.kts")) {
 //            setUpGroovyDslExtensions(project)
@@ -30,7 +33,6 @@ class ComposePlugin : Plugin<Project> {
 //        project.initializePreview(desktopExtension)
 //        composeExtension.extensions.create("web", WebExtension::class.java)
 
-        project.plugins.apply(ComposeCompilerKotlinSupportPlugin::class.java)
 
         project.afterEvaluate {
 //            configureDesktop(project, desktopExtension)
@@ -47,14 +49,17 @@ class ComposePlugin : Plugin<Project> {
 
             fun ComponentModuleMetadataHandler.replaceAndroidx(original: String, replacement: String) {
                 module(original) {
-                    replacedBy(replacement, "org.jetbrains.compose isn't compatible with androidx.compose, because it is the same library published with different maven coordinates")
+                    replacedBy(
+                        replacement,
+                        "org.jetbrains.compose isn't compatible with androidx.compose, because it is the same library published with different maven coordinates"
+                    )
                 }
             }
 
             project.tasks.withType(KotlinCompile::class.java).configureEach {
                 kotlinOptions.apply {
                     freeCompilerArgs = freeCompilerArgs +
-                            composeExtension.kotlinCompilerPluginArgs.get().flatMap { arg ->
+                            gtk.compose.kotlinCompilerPluginArgs.get().flatMap { arg ->
                                 listOf("-P", "plugin:androidx.compose.compiler.plugins.kotlin:$arg")
                             }
                 }
@@ -88,9 +93,9 @@ class ComposePlugin : Plugin<Project> {
         }
     }
 
-    class Dependencies(project: Project) {
+    abstract class Dependencies() {
         val desktop = DesktopDependencies
-        val compiler = CompilerDependencies(project)
+        val compiler = CompilerDependencies()
         val animation get() = composeDependency("org.jetbrains.compose.animation:animation")
         val animationGraphics get() = composeDependency("org.jetbrains.compose.animation:animation-graphics")
         val foundation get() = composeDependency("org.jetbrains.compose.foundation:foundation")
@@ -116,14 +121,14 @@ class ComposePlugin : Plugin<Project> {
         val macos_arm64 = composeDependency("org.jetbrains.compose.desktop:desktop-jvm-macos-arm64")
     }
 
-    class CompilerDependencies(private val project: Project) {
+    class CompilerDependencies() {
         fun forKotlin(version: String) = "org.jetbrains.compose.compiler:compiler:" +
                 ComposeCompilerCompatibility.compilerVersionFor(version)
 
         /**
          * Compose Compiler that is chosen by the version of Kotlin applied to the Gradle project
          */
-        val auto get() = forKotlin(project.getKotlinPluginVersion())
+//        val auto get() = forKotlin(project.getKotlinPluginVersion())
     }
 
     object CommonComponentsDependencies {

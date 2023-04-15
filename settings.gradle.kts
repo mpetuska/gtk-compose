@@ -10,5 +10,6 @@ include(
 
 include(
     ":samples:plain",
-    ":samples:compose"
+    ":samples:compose",
+    ":samples:todo",
 )
