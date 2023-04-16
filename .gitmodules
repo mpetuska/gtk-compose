@@ -1,7 +1,3 @@
-[submodule "gtk-kn"]
-	path = gtk-kn
-	url = git@github.com:gtk-kn/gtk-kn.git
-	branch = master
 [submodule "compose-multiplatform"]
 	path = compose-multiplatform
 	url = git@github.com:JetBrains/compose-multiplatform.git
@@ -14,3 +10,7 @@
 	path = compose-multiplatform-core
 	url = git@github.com:JetBrains/compose-multiplatform-core.git
 	branch = jb-main
+[submodule "gtk-kn"]
+	path = gtk-kn
+	url = git@gitlab.com:petuska/gtk-kn.git
+	branch = master

@@ -15,7 +15,7 @@ kotlin {
         named("linuxX64Main") {
             dependencies {
                 implementation("org.jetbrains.compose.runtime:runtime:1.4.0")
-                api("org.gtkkn:gtk")
+                api("org.gtkkn:gtk4")
             }
         }
     }

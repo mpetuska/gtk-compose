@@ -17,5 +17,14 @@
             <default>false</default>
             <summary>Default window maximised behaviour</summary>
         </key>
+        <key name="filter" type="s">
+            <choices>
+                <choice value="All"/>
+                <choice value="Open"/>
+                <choice value="Done"/>
+            </choices>
+            <default>"All"</default>
+            <summary>Filter of the tasks</summary>
+        </key>
     </schema>
 </schemalist>

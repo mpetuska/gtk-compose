@@ -16,7 +16,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation("org.gtkkn:adw")
+                implementation("org.gtkkn:adwaita")
             }
         }
     }
