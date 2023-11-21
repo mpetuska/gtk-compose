@@ -3,3 +3,4 @@
 .fleet/
 .gradle/
 build/
+local.properties

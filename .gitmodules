@@ -12,5 +12,5 @@
 	branch = jb-main
 [submodule "gtk-kn"]
 	path = gtk-kn
-	url = git@gitlab.com:petuska/gtk-kn.git
-	branch = master
+	url = git@gitlab.com:gtk-kn/gtk-kn.git
+	branch = experimental

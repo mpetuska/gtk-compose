@@ -1,11 +1,11 @@
 plugins {
+    signing
     `kotlin-dsl`
-    id("com.gradle.plugin-publish") version "0.21.0"
     `java-gradle-plugin`
     `maven-publish`
-    signing
+    alias(libs.plugins.gradle.publish)
+    alias(libs.plugins.build.config)
     id("com.github.johnrengelman.shadow") version "7.0.0"
-    id("com.github.gmazzo.buildconfig") version "3.1.0"
     id("de.undercouch.download") version "5.3.0"
 }
 
@@ -42,8 +42,8 @@ buildConfig {
     useKotlinOutput {
         internalVisibility = true
     }
-    buildConfigField("String", "version", project.findProperty("version")!!.let { "\"$it\"" })
-    buildConfigField("String", "composeVersion", project.findProperty("version.compose")!!.let { "\"$it\"" })
+    buildConfigField("String", "version", "\"${project.version}\"")
+    buildConfigField("String", "composeVersion", "\"${libs.versions.compose.get()}\"")
 }
 
 //gradlePluginConfig {
@@ -94,6 +94,7 @@ dependencies {
     compileOnly(kotlin("gradle-plugin-api"))
     compileOnly(kotlin("gradle-plugin"))
     compileOnly(kotlin("native-utils"))
+    implementation("org.gtkkn:gradle-plugin")
 
     testImplementation(gradleTestKit())
     testImplementation(kotlin("gradle-plugin-api"))

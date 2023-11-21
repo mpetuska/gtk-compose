@@ -18,7 +18,7 @@ internal val composeVersion get() = BuildConfig.composeVersion
 
 class ComposePlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        project.plugins.apply(GtkPlugin::class.java)
+        project.pluginManager.apply(GtkPlugin::class.java)
         project.plugins.apply(ComposeCompilerKotlinSupportPlugin::class.java)
 //        val desktopExtension = composeExtension.extensions.create("desktop", DesktopExtension::class.java)
 //        val androidExtension = composeExtension.extensions.create("android", AndroidExtension::class.java)

@@ -1,17 +1,9 @@
 package dev.petuska.gtk.compose.gradle.plugin.ext
 
-import dev.petuska.gtk.compose.gradle.plugin.utils.maybeCreate
 import org.gradle.api.Project
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.plugins.ExtensionAware
+import org.gradle.kotlin.dsl.getByType
 
-interface GtkExt : ExtensionAware {
-    val gSchemasDirectory: DirectoryProperty
-}
+typealias GtkExt = org.gtkkn.gradle.plugin.ext.GtkExt
 
 internal inline val Project.gtk: GtkExt
-    get() = extensions.maybeCreate("gtk") {
-        gSchemasDirectory.convention(
-            layout.projectDirectory.dir("${System.getenv("HOME")}/.local/share/glib-2.0/schemas/")
-        )
-    }
+    get() = extensions.getByType()

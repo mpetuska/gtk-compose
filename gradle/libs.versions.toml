@@ -1,0 +1,38 @@
+# Sharing dependency versions between projects
+# https://docs.gradle.org/current/userguide/platforms.html
+[versions]
+compose = "1.5.10"
+detekt = "1.23.0"
+dokka = "1.8.10"
+java = "17"
+kotlin = "1.9.10"
+coroutines = "1.7.3"
+ktlint = "0.49.1"
+kermit = "2.0.2"
+
+[libraries]
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
+detekt = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+kotlin-test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotations-common", version.ref = "kotlin" }
+kotlin-test-common = { module = "org.jetbrains.kotlin:kotlin-test-common", version.ref = "kotlin" }
+kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1"
+kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+
+# plugins
+plugin-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+plugin-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
+plugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+plugin-spotless = "com.diffplug.spotless:spotless-plugin-gradle:6.17.0"
+
+[plugins]
+build-config = "com.github.gmazzo.buildconfig:3.1.0"
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+gradle-publish = "com.gradle.plugin-publish:0.21.0"
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+versions = "com.github.ben-manes.versions:0.50.0"
+versions-update = "nl.littlerobots.version-catalog-update:0.8.1"
+compose = { id = "org.jetbrains.compose", version.ref = "compose" }

@@ -14,19 +14,12 @@ kotlin {
     targetHierarchy.default()
     explicitApi()
     linuxX64()
-
     sourceSets {
         named("nativeMain") {
             dependencies {
-                implementation(libs.kotlinx.coroutines.core)
-                implementation(libs.kermit)
-                implementation(libs.compose.runtime)
-                implementation("org.gtkkn:gtk4")
+                api(project(":gtk-compose:gtk-compose-runtime"))
+                api("org.gtkkn:gtk4")
             }
-        }
-
-        configureEach {
-            languageSettings.optIn("dev.petuska.gtk.compose.runtime.internal.GtkComposeInternalApi")
         }
     }
 }
