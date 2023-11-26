@@ -1,8 +1,8 @@
 package dev.petuska.gtk.compose.foundation
 
 import androidx.compose.runtime.Composable
-import dev.petuska.gtk.compose.runtime.internal.GtkComposeInternalApi
-import dev.petuska.gtk.compose.runtime.node.GtkElementNode
+import dev.petuska.gtk.compose.ui.internal.GtkComposeInternalApi
+import dev.petuska.gtk.compose.ui.node.GtkElementNode
 import org.gtkkn.bindings.gtk.Label
 
 @GtkComposeInternalApi

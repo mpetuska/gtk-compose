@@ -1,13 +1,13 @@
-package dev.petuska.gtk.compose.runtime.internal
+package dev.petuska.gtk.compose.ui.internal
 
 import androidx.compose.runtime.AbstractApplier
-import dev.petuska.gtk.compose.runtime.Logger
-import dev.petuska.gtk.compose.runtime.node.AnyGtkContainerNode
-import dev.petuska.gtk.compose.runtime.node.AnyGtkNode
-import dev.petuska.gtk.compose.runtime.node.GtkContainerNode
+import dev.petuska.gtk.compose.ui.node.AnyGtkContainerNode
+import dev.petuska.gtk.compose.ui.node.AnyGtkNode
+import dev.petuska.gtk.compose.ui.node.GtkContainerNode
 
 
 @GtkComposeInternalApi
+@PublishedApi
 internal class GtkNodeApplier(
     root: AnyGtkContainerNode
 ) : AbstractApplier<AnyGtkNode>(root) {

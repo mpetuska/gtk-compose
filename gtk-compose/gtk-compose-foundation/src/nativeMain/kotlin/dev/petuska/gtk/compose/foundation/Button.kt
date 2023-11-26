@@ -1,9 +1,9 @@
 package dev.petuska.gtk.compose.foundation
 
 import androidx.compose.runtime.Composable
-import dev.petuska.gtk.compose.runtime.internal.GtkComposeInternalApi
-import dev.petuska.gtk.compose.runtime.node.ContentBuilder
-import dev.petuska.gtk.compose.runtime.node.GtkParentNode
+import dev.petuska.gtk.compose.ui.internal.GtkComposeInternalApi
+import dev.petuska.gtk.compose.ui.node.ContentBuilder
+import dev.petuska.gtk.compose.ui.node.GtkParentNode
 import org.gtkkn.bindings.gtk.Button
 import org.gtkkn.bindings.gtk.Widget
 

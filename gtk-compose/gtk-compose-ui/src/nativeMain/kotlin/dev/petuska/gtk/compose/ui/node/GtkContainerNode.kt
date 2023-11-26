@@ -1,7 +1,8 @@
-package dev.petuska.gtk.compose.runtime.node
+package dev.petuska.gtk.compose.ui.node
 
 import androidx.compose.runtime.*
-import dev.petuska.gtk.compose.runtime.internal.GtkComposeInternalApi
+import dev.petuska.gtk.compose.ui.internal.GtkComposeInternalApi
+import dev.petuska.gtk.compose.ui.internal.GtkNodeApplier
 import org.gtkkn.bindings.gtk.Widget
 
 @GtkComposeInternalApi
@@ -19,6 +20,21 @@ public abstract class GtkContainerNode<out TWidget : Widget> : GtkNode<TWidget>(
     public abstract fun move(from: Int, to: Int, count: Int)
 
     public abstract fun clear()
+}
+
+
+@OptIn(GtkComposeInternalApi::class)
+public inline fun <TWidget : Widget, TNode : GtkContainerNode<TWidget>> TNode.setContent(
+    parentComposition: CompositionContext,
+//    content: @Composable (ContentBuilder<TWidget>.() -> Unit)
+): Composition {
+    val applier = GtkNodeApplier(this)
+    val composition = Composition(applier, parentComposition)
+//    val scope = MenuScope(SwingMenuScope())
+    composition.setContent {
+//        scope.content()
+    }
+    return composition
 }
 
 @Composable

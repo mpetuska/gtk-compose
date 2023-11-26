@@ -20,7 +20,6 @@ kotlin {
         }
         commonMain {
             dependencies {
-                implementation(project(":gtk-compose:gtk-compose-runtime"))
                 implementation(project(":gtk-compose:gtk-compose-foundation"))
             }
         }

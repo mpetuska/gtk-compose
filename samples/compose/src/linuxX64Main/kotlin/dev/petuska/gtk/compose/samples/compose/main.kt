@@ -1,13 +1,14 @@
 package dev.petuska.gtk.compose.samples.compose
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import dev.petuska.gtk.compose.foundation.Box
 import dev.petuska.gtk.compose.foundation.Button
 import dev.petuska.gtk.compose.foundation.Label
-import dev.petuska.gtk.compose.foundation.renderComposable
-import org.gtkkn.bindings.gio.ApplicationFlags
+import dev.petuska.gtk.compose.ui.application
+import dev.petuska.gtk.compose.ui.platform.LocalApplication
+import dev.petuska.gtk.compose.ui.window.Window
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import org.gtkkn.bindings.gio.Settings
 import org.gtkkn.bindings.gtk.Application
 import org.gtkkn.bindings.gtk.ApplicationWindow
@@ -16,12 +17,36 @@ import org.gtkkn.bindings.gtk.Orientation
 
 private const val APP_ID = "dev.petuska.gtk.compose.samples.compose"
 fun main(vararg args: String) {
-    val application = Application(APP_ID, ApplicationFlags.DEFAULT_FLAGS)
-    application.connectActivate {
-        renderComposable(buildApplicationWindow(application)) { TodoWindow() }
+    Dispatchers.Main
+    application(APP_ID, args = args.toList()) {
+        var visible by remember { mutableStateOf(false) }
+        val application = LocalApplication.current
+        SideEffect {
+            application.setAccelsForAction("win.close", listOf("<Ctrl>W"))
+        }
+
+        LaunchedEffect(Unit) {
+            repeat(5) {
+                println("Launching window in ${5 - it}s")
+                delay(1000)
+            }
+            visible = true
+            println("Window launched $visible")
+        }
+
+        println("IsVisible: $visible")
+        Window(visible) {
+            println("Rendering window")
+            Box {
+                Button(
+                    onClick = { visible = false }
+                ) {
+                    Label("Hide")
+                }
+                TodoWindow()
+            }
+        }
     }
-    application.setAccelsForAction("win.close", listOf("<Ctrl>W"))
-    application.run(args.size, args.toList())
 }
 
 private fun buildApplicationWindow(application: Application): ApplicationWindow {
@@ -47,8 +72,16 @@ private fun buildApplicationWindow(application: Application): ApplicationWindow 
 @Composable
 private fun TodoWindow() {
     Box {
-        val labels = remember { mutableStateListOf("GTK", "Compose", "Super", "Awesome!") }
+        val labels = remember { mutableStateListOf("TMP", "GTK", "Compose", "Super", "Awesome!") }
 
+        LaunchedEffect(Unit) {
+            repeat(5) {
+                println("Removing TMP ${5 - it}s")
+                delay(1000)
+            }
+            labels.remove("TMP")
+            println("TMP removed")
+        }
         labels.forEach {
             Button(onClick = {
                 println("Clicked $it")

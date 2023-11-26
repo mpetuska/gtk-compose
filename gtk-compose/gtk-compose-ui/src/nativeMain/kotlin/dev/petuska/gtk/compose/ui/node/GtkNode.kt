@@ -1,8 +1,8 @@
-package dev.petuska.gtk.compose.runtime.node
+package dev.petuska.gtk.compose.ui.node
 
 import androidx.compose.runtime.*
-import dev.petuska.gtk.compose.runtime.internal.GtkComposeInternalApi
-import dev.petuska.gtk.compose.runtime.internal.GtkNodeApplier
+import dev.petuska.gtk.compose.ui.internal.GtkComposeInternalApi
+import dev.petuska.gtk.compose.ui.internal.GtkNodeApplier
 import org.gtkkn.bindings.gtk.Widget
 
 @GtkComposeInternalApi
@@ -28,6 +28,7 @@ public inline fun <TWidget : Widget, TNode : GtkNode<TWidget>> GtkNode(
 
     val aFactory = { factory().also { scope.node = it } }
     val aContent = @Composable { content.invoke(scope) }
+
     if (skippableUpdate == null) {
         ComposeNode<TNode, GtkNodeApplier>(
             factory = aFactory,

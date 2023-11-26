@@ -17,8 +17,7 @@ kotlin {
     sourceSets {
         named("nativeMain") {
             dependencies {
-                api(project(":gtk-compose:gtk-compose-runtime"))
-                api("org.gtkkn:gtk4")
+                api(project(":gtk-compose:gtk-compose-ui"))
             }
         }
     }

@@ -1,4 +1,4 @@
-package dev.petuska.gtk.compose.runtime.internal
+package dev.petuska.gtk.compose.ui.internal
 
 import org.gtkkn.bindings.gtk.Widget
 

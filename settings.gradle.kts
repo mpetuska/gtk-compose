@@ -12,7 +12,7 @@ includeBuild("./gtk-kn")
 includeBuild("./gtk-compose-gradle-plugin")
 
 include(
-    ":gtk-compose:gtk-compose-runtime",
+    ":gtk-compose:gtk-compose-ui",
     ":gtk-compose:gtk-compose-foundation",
 )
 
@@ -20,6 +20,7 @@ if (properties["dev.petuska.gtk.compose.samples.disable"] != "true") {
     include(
         ":samples:compose",
         ":samples:desktop-sandbox",
+        ":samples:html-sandbox",
         ":samples:plain",
         ":samples:todo",
     )

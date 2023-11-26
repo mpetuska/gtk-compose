@@ -1,8 +1,8 @@
-package dev.petuska.gtk.compose.runtime.node
+package dev.petuska.gtk.compose.ui.node
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffectScope
-import dev.petuska.gtk.compose.runtime.internal.GtkComposeInternalApi
+import dev.petuska.gtk.compose.ui.internal.GtkComposeInternalApi
 import org.gtkkn.bindings.gtk.Widget
 
 public typealias ScopedBuilder<TScope> = @Composable TScope.() -> Unit
