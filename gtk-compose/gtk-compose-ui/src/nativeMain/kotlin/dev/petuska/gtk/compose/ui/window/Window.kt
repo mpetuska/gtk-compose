@@ -1,18 +1,23 @@
 package dev.petuska.gtk.compose.ui.window
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCompositionContext
 import dev.petuska.gtk.compose.ui.internal.GtkComposeInternalApi
-import dev.petuska.gtk.compose.ui.internal.GtkNodeApplier
 import dev.petuska.gtk.compose.ui.node.ContentBuilder
 import dev.petuska.gtk.compose.ui.node.GtkParentNode
-import dev.petuska.gtk.compose.ui.node.LazyNodeScope
+import dev.petuska.gtk.compose.ui.node.setContent
 import dev.petuska.gtk.compose.ui.platform.LocalApplication
-import org.gtkkn.bindings.gtk.ApplicationWindow
+import dev.petuska.gtk.compose.ui.platform.LocalWindow
+import dev.petuska.gtk.compose.ui.platform.rememberLogger
+import dev.petuska.gtk.compose.ui.util.ComponentUpdater
+import org.gtkkn.bindings.gtk.Application
 import org.gtkkn.bindings.gtk.Widget
 import org.gtkkn.bindings.gtk.Window
 
 @GtkComposeInternalApi
-public class WindowNode(override val widget: Window) : GtkParentNode<Window>() {
+public open class WindowNode<TWidget : Window>(override val widget: TWidget) : GtkParentNode<TWidget>() {
 
     override fun add(child: Widget) {
         widget.child = child
@@ -23,92 +28,62 @@ public class WindowNode(override val widget: Window) : GtkParentNode<Window>() {
     }
 }
 
-private fun WindowNode.setContent(
-    parentComposition: CompositionContext,
-    content: ContentBuilder<Window>
-): Composition {
-    val applier = GtkNodeApplier(this)
-    val scope = LazyNodeScope<Window>().also { it.node = this }
-    val composition = Composition(applier, parentComposition)
-    composition.setContent {
-        scope.content()
-    }
-    return composition
-}
-
 @Composable
 public fun Window(
     visible: Boolean,
+    title: String? = null,
     child: ContentBuilder<Window>
 ) {
+    Window(
+        visible = visible,
+        title = title,
+        create = { application ->
+            WindowNode(Window().apply {
+                setApplication(application)
+            })
+        },
+        update = {
+        },
+        child = child,
+    )
+}
+
+@Composable
+public fun <TNode : WindowNode<*>> Window(
+    visible: Boolean,
+    title: String?,
+    create: (application: Application) -> TNode,
+    dispose: (node: TNode) -> Unit = {},
+    update: ComponentUpdater.UpdateScope.(node: TNode) -> Unit,
+    child: ContentBuilder<Window>
+) {
+    val logger = rememberLogger { "Window" }
     val application = LocalApplication.current
     val parentComposition = rememberCompositionContext()
     val node = remember {
-        WindowNode(Window().apply {
-            println("Setting Application on Window: ${name}")
-            setApplication(application)
-        })
+        create(application)
     }
+    val updater = remember(::ComponentUpdater)
     GtkWindow(
         visible = visible,
         create = {
             node.apply {
-                setContent(parentComposition, child)
+                setContent(parentComposition, logger) {
+                    CompositionLocalProvider(LocalWindow provides node.widget) {
+                        child()
+                    }
+                }
             }
         },
-        dispose = {
-
+        dispose = { n ->
+            dispose(n)
+            n.widget.close()
         },
-        update = {},
+        update = { n ->
+            updater.update {
+                set(title) { n.widget.title = it }
+                update(n)
+            }
+        },
     )
-
-
-//    val application = LocalApplication.current
-//    val nodeRef = remember { Ref<WindowNode>() }
-//    fun node() = nodeRef.value!!
-//
-//    DisposableEffect(Unit) {
-//        nodeRef.value = WindowNode(Window().apply {
-//            println("NAME: ${name}")
-//            setApplication(application)
-//        })
-//        onDispose {
-//            nodeRef.value?.widget?.close()
-//        }
-//    }
-//    DisposableEffect(visible) {
-//        val showJob = GlobalScope.launch(MainUIDispatcher) {
-//            println("VISIBLE: $visible")
-//            if (visible) node().widget.present() else node().widget.hide()
-//        }
-//
-//        onDispose {
-//            showJob.cancel()
-//        }
-//    }
-//
-//    DisposableEffect(Unit) {
-//        val node = node()
-//        val applier = GtkNodeApplier(node)
-//        val scope = LazyNodeScope<Window>().also { it.node = node }
-//        val composition = Composition(applier, parentComposition)
-//        composition.setContent {
-//            scope.child()
-//        }
-//
-//        onDispose {
-//            println("Disposing window")
-//            composition.dispose()
-//            node.widget.close()
-//        }
-//    }
-
-//    ComposeNode<WindowNode, GtkNodeApplier>(
-//        factory = { node },
-//        update = {
-//            set(visible) {
-//                if(visible) widget.present() else widget.hide()
-//            }
-//        }
-//    )
 }

@@ -1,12 +1,10 @@
 package dev.petuska.gtk.compose.foundation
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Composition
 import androidx.compose.runtime.DisposableEffect
 import dev.petuska.gtk.compose.ui.internal.GtkComposeInternalApi
 import dev.petuska.gtk.compose.ui.node.ContentBuilder
 import dev.petuska.gtk.compose.ui.node.GtkParentNode
-import org.gtkkn.bindings.gtk.Application
 import org.gtkkn.bindings.gtk.ApplicationWindow
 import org.gtkkn.bindings.gtk.Widget
 
@@ -19,25 +17,6 @@ private class ApplicationWindowNode(override val widget: ApplicationWindow) : Gt
 
     override fun clear() {
         widget.child = null
-    }
-}
-
-@Composable
-public fun ApplicationWindow(
-    application: Application,
-    child: ContentBuilder<ApplicationWindow>
-) {
-    @OptIn(GtkComposeInternalApi::class)
-    GtkParentNode(update = {}, child = {
-        DisposableEffect(application) {
-            scopeElement.present()
-            onDispose { scopeElement.close() }
-        }
-        child()
-    }) {
-        val widget = ApplicationWindow(application)
-        widget.present()
-        ApplicationWindowNode(widget)
     }
 }
 

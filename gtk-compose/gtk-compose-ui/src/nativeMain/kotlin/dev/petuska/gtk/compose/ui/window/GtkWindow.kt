@@ -1,11 +1,9 @@
 package dev.petuska.gtk.compose.ui.window
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import dev.petuska.gtk.compose.ui.platform.MainUiDispatcher
-import dev.petuska.gtk.compose.ui.node.GtkContainerNode
-import dev.petuska.gtk.compose.ui.node.Ref
+import dev.petuska.gtk.compose.ui.platform.rememberLogger
+import dev.petuska.gtk.compose.ui.util.Ref
 import dev.petuska.gtk.compose.ui.util.UpdateEffect
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -41,14 +39,16 @@ import org.gtkkn.bindings.gtk.Window
 @OptIn(DelicateCoroutinesApi::class)
 @Suppress("unused")
 @Composable
-public fun <T : GtkContainerNode<Window>> GtkWindow(
+public fun <TNode : WindowNode<*>> GtkWindow(
     visible: Boolean = true,
-    create: () -> T,
-    dispose: (T) -> Unit,
-    update: (T) -> Unit = {}
+    create: () -> TNode,
+    dispose: (TNode) -> Unit,
+    update: (TNode) -> Unit = {}
 ) {
-    val windowRef = remember { Ref<T>() }
+    val windowRef = remember { Ref<TNode>() }
     fun window() = windowRef.value!!
+
+    val logger = rememberLogger(windowRef.value) { "${windowRef.value ?: "GtkWindow"}" }
 
     DisposableEffect(Unit) {
         windowRef.value = create()
@@ -90,20 +90,20 @@ public fun <T : GtkContainerNode<Window>> GtkWindow(
         // 4. window1.isVisible = true
         //
         // So we will have the wrong window active (window1).
-        println("Scheduling show job")
+        logger.d { "Scheduling show job" }
         val showJob = GlobalScope.launch(MainUiDispatcher) {
             val window = window().widget
             if (visible) {
-                println("Presenting")
+                logger.v { "Presenting" }
                 window.present()
             } else {
                 println("Hiding")
                 window.hide()
             }
         }
-        println("Show job scheduled")
+        logger.v { "Show job scheduled" }
         onDispose {
-            println("Cancelling show job")
+            logger.d { "Cancelling show job" }
             showJob.cancel()
         }
     }

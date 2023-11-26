@@ -1,26 +1,45 @@
 package dev.petuska.gtk.compose.ui.platform
 
-import dev.petuska.gtk.compose.ui.internal.Logger
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.*
 import org.gtkkn.bindings.glib.Glib
 import kotlin.coroutines.CoroutineContext
 
+/**
+ * Dedicated thread to bootstrap GTK. After bootstrapping,
+ * GTK is meant to fully own the thread and as such no work on it should block the thread nor be executed directly.
+ *
+ * To interract with GTK on the main thread use [MainUiDispatcher]
+ *
+ * @see MainUiDispatcher
+ * @see Dispatchers.Main
+ */
 @OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
 internal val MainUiThread: CloseableCoroutineDispatcher = newSingleThreadContext("GTK-Compose")
 
-public val MainUiDispatcher: CoroutineDispatcher = GioMainDispatcher(Dispatchers.Default, false)
+/**
+ * Alias for [Dispatchers.Main].
+ * Work dispatched via this dispatcher is guaranteed to be executed on GTK main/UI thread.
+ */
+public inline val MainUiDispatcher: CoroutineDispatcher get() = Dispatchers.Main
 
 /**
- * Dispatcher for Gio event dispatching thread
+ * Dispatcher for GIO event dispatching thread.
+ *
+ * It delegates work to the GIO event loop which not only is thread-safe,
+ * but also guarantees that scheduled work will be executed on the main GIO thread.
+ *
+ * @see Glib.idleAdd
  */
 @OptIn(InternalCoroutinesApi::class)
-private class GioMainDispatcher(
-    val delegate: CoroutineDispatcher,
-    private val invokeImmediately: Boolean
+internal class GioMainDispatcher(
+    private val delegate: CoroutineDispatcher,
+    private val invokeImmediately: Boolean,
+    logger: Logger,
 ) : MainCoroutineDispatcher() {
-    private val logger = Logger.withTag("GioMainDispatcher")
+    private val logger = logger.withTag("GioMainDispatcher")
     override val immediate: MainCoroutineDispatcher =
-        if (invokeImmediately) this else GioMainDispatcher(delegate, true)
+        if (invokeImmediately) this else GioMainDispatcher(delegate, true, logger)
 
     override fun dispatch(context: CoroutineContext, block: Runnable) = delegate.dispatch(context, Runnable {
         logger.v { "Dispatching to GLib event loop" }

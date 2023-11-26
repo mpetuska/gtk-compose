@@ -8,6 +8,8 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 import kotlin.concurrent.AtomicInt
 
+private inline val GlobalSnapshotManagerDispatcher: CoroutineDispatcher get() = MainUiDispatcher
+
 internal object GlobalSnapshotManager {
     private val started = AtomicInt(0)
     private val sent = AtomicInt(0)
@@ -30,4 +32,3 @@ internal object GlobalSnapshotManager {
     }
 }
 
-internal val GlobalSnapshotManagerDispatcher: CoroutineDispatcher = MainUiDispatcher

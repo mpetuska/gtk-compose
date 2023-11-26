@@ -6,8 +6,7 @@ import dev.petuska.gtk.compose.foundation.Button
 import dev.petuska.gtk.compose.foundation.Label
 import dev.petuska.gtk.compose.ui.application
 import dev.petuska.gtk.compose.ui.platform.LocalApplication
-import dev.petuska.gtk.compose.ui.window.Window
-import kotlinx.coroutines.Dispatchers
+import dev.petuska.gtk.compose.ui.window.ApplicationWindow
 import kotlinx.coroutines.delay
 import org.gtkkn.bindings.gio.Settings
 import org.gtkkn.bindings.gtk.Application
@@ -17,9 +16,9 @@ import org.gtkkn.bindings.gtk.Orientation
 
 private const val APP_ID = "dev.petuska.gtk.compose.samples.compose"
 fun main(vararg args: String) {
-    Dispatchers.Main
     application(APP_ID, args = args.toList()) {
         var visible by remember { mutableStateOf(false) }
+        var title by remember { mutableStateOf<String?>(null) }
         val application = LocalApplication.current
         SideEffect {
             application.setAccelsForAction("win.close", listOf("<Ctrl>W"))
@@ -33,10 +32,20 @@ fun main(vararg args: String) {
             visible = true
             println("Window launched $visible")
         }
+        LaunchedEffect(visible) {
+            repeat(5) {
+                println("Changing window title in ${5 - it}s")
+                delay(1000)
+            }
+            title = if (visible) {
+                "GTK Compose"
+            } else {
+                "Hidden"
+            }
+            println("Window title changed: $title")
+        }
 
-        println("IsVisible: $visible")
-        Window(visible) {
-            println("Rendering window")
+        ApplicationWindow(visible = visible, title = title) {
             Box {
                 Button(
                     onClick = { visible = false }
@@ -72,16 +81,8 @@ private fun buildApplicationWindow(application: Application): ApplicationWindow 
 @Composable
 private fun TodoWindow() {
     Box {
-        val labels = remember { mutableStateListOf("TMP", "GTK", "Compose", "Super", "Awesome!") }
+        val labels = remember { mutableStateListOf("GTK", "Compose", "Super", "Awesome!") }
 
-        LaunchedEffect(Unit) {
-            repeat(5) {
-                println("Removing TMP ${5 - it}s")
-                delay(1000)
-            }
-            labels.remove("TMP")
-            println("TMP removed")
-        }
         labels.forEach {
             Button(onClick = {
                 println("Clicked $it")

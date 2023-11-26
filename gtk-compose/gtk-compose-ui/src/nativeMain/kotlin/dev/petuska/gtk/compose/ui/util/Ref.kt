@@ -1,4 +1,4 @@
-package dev.petuska.gtk.compose.ui.node
+package dev.petuska.gtk.compose.ui.util
 
 /**
  * Value holder general purpose class.

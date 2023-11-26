@@ -1,6 +1,7 @@
 package dev.petuska.gtk.compose.ui.node
 
 import androidx.compose.runtime.*
+import co.touchlab.kermit.Logger
 import dev.petuska.gtk.compose.ui.internal.GtkComposeInternalApi
 import dev.petuska.gtk.compose.ui.internal.GtkNodeApplier
 import org.gtkkn.bindings.gtk.Widget
@@ -22,17 +23,20 @@ public abstract class GtkContainerNode<out TWidget : Widget> : GtkNode<TWidget>(
     public abstract fun clear()
 }
 
-
-@OptIn(GtkComposeInternalApi::class)
-public inline fun <TWidget : Widget, TNode : GtkContainerNode<TWidget>> TNode.setContent(
+/**
+ * Mounts this [GtkContainerNode] as a sub-composition of the [parentComposition]
+ */
+@GtkComposeInternalApi
+public fun <TWidget : Widget> GtkContainerNode<TWidget>.setContent(
     parentComposition: CompositionContext,
-//    content: @Composable (ContentBuilder<TWidget>.() -> Unit)
+    logger: Logger,
+    content: ContentBuilder<TWidget>
 ): Composition {
-    val applier = GtkNodeApplier(this)
+    val applier = GtkNodeApplier(this, logger)
+    val scope = StaticNodeScope(this)
     val composition = Composition(applier, parentComposition)
-//    val scope = MenuScope(SwingMenuScope())
     composition.setContent {
-//        scope.content()
+        scope.content()
     }
     return composition
 }

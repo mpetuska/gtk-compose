@@ -1,6 +1,7 @@
 package dev.petuska.gtk.compose.ui.internal
 
 import androidx.compose.runtime.AbstractApplier
+import co.touchlab.kermit.Logger
 import dev.petuska.gtk.compose.ui.node.AnyGtkContainerNode
 import dev.petuska.gtk.compose.ui.node.AnyGtkNode
 import dev.petuska.gtk.compose.ui.node.GtkContainerNode
@@ -9,9 +10,10 @@ import dev.petuska.gtk.compose.ui.node.GtkContainerNode
 @GtkComposeInternalApi
 @PublishedApi
 internal class GtkNodeApplier(
-    root: AnyGtkContainerNode
+    root: AnyGtkContainerNode,
+    logger: Logger,
 ) : AbstractApplier<AnyGtkNode>(root) {
-    private val logger = Logger.withTag(this::class.simpleName!!)
+    private val logger = logger.withTag(this::class.simpleName!!)
 
     override fun insertTopDown(index: Int, instance: AnyGtkNode) {
         // ignored. Building tree bottom-up

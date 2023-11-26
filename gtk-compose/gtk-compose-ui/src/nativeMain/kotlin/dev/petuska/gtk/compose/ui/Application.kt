@@ -1,20 +1,24 @@
 package dev.petuska.gtk.compose.ui
 
 import androidx.compose.runtime.*
+import co.touchlab.kermit.Logger
+import co.touchlab.kermit.Severity
+import co.touchlab.kermit.loggerConfigInit
+import co.touchlab.kermit.platformLogWriter
 import dev.petuska.gtk.compose.ui.internal.GtkComposeInternalApi
 import dev.petuska.gtk.compose.ui.internal.GtkNodeApplier
-import dev.petuska.gtk.compose.ui.internal.Logger
 import dev.petuska.gtk.compose.ui.node.ContainerScope
 import dev.petuska.gtk.compose.ui.node.ContentBuilder
 import dev.petuska.gtk.compose.ui.node.GtkContainerNode
-import dev.petuska.gtk.compose.ui.platform.GlobalSnapshotManager
-import dev.petuska.gtk.compose.ui.platform.LocalApplication
-import dev.petuska.gtk.compose.ui.platform.MainUiDispatcher
-import dev.petuska.gtk.compose.ui.platform.MainUiThread
+import dev.petuska.gtk.compose.ui.platform.*
+import dev.petuska.gtk.compose.ui.util.AnsiLogFormatter
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.toKStringFromUtf8
 import kotlinx.coroutines.*
 import org.gtkkn.bindings.gio.ApplicationFlags
 import org.gtkkn.bindings.gtk.Application
 import org.gtkkn.bindings.gtk.Widget
+import platform.posix.getenv
 import kotlin.system.exitProcess
 
 /**
@@ -41,7 +45,7 @@ public fun <TWidget : Widget> renderComposable(
     }
 
     val composition = ControlledComposition(
-        applier = GtkNodeApplier(root),
+        applier = GtkNodeApplier(root, Logger),
         parent = recomposer
     )
     val scope = object : ContainerScope<TWidget> {
@@ -83,7 +87,6 @@ public fun application(
             content = content
         )
     }
-    println("DONE")
     if (exitProcessOnExit) {
         exitProcess(code)
     }
@@ -105,31 +108,49 @@ public fun CoroutineScope.launchApplication(
     }
 }
 
+@OptIn(ExperimentalForeignApi::class)
+private fun buildLogger(): Logger {
+    return Logger(
+        loggerConfigInit(
+            minSeverity = (getenv("LOG_LEVEL")?.toKStringFromUtf8() ?: "INFO").let { env ->
+                env.toIntOrNull()?.let { Severity.entries[it] } ?: Severity.valueOf(
+                    env.lowercase().replaceFirstChar(Char::uppercase)
+                )
+            },
+            logWriters = arrayOf(platformLogWriter(AnsiLogFormatter)),
+        ),
+        "gtk-compose"
+    )
+}
+
 public suspend fun awaitApplication(
     applicationId: String,
     flags: ApplicationFlags = ApplicationFlags.DEFAULT_FLAGS,
     args: List<String> = listOf(),
     content: @Composable ApplicationScope.() -> Unit
 ): Int = withContext(MainUiThread) {
+    val logger = buildLogger()
+    loadPlatformSideEffects(logger)
+
     val application = Application(applicationId, flags)
-    Logger.d("Bootstrapping GTK Composer")
-    Logger.v { "Connecting activate signal" }
+    logger.d("Bootstrapping GTK Composer")
+    logger.v { "Connecting activate signal" }
     application.connectActivate {
-        Logger.d { "Application(id=${applicationId}) activated, proceeding with compose mounting" }
+        logger.d { "Application(id=${applicationId}) activated, proceeding with compose mounting" }
         CoroutineScope(MainUiDispatcher).launch(start = CoroutineStart.UNDISPATCHED) {
-            Logger.v { "Starting GlobalSnapshotManager" }
+            logger.v { "Starting GlobalSnapshotManager" }
             GlobalSnapshotManager.ensureStarted()
 
             val context = DefaultMonotonicFrameClock + MainUiDispatcher
             val recomposer = Recomposer(context)
 
-            Logger.v { "Launching recomposer" }
+            logger.v { "Launching recomposer" }
             CoroutineScope(context).launch(start = CoroutineStart.UNDISPATCHED) {
-                Logger.v { "Recomposing" }
+                logger.v { "Recomposing" }
                 recomposer.runRecomposeAndApplyChanges()
             }
 
-            Logger.v { "Creating composition" }
+            logger.v { "Creating composition" }
             val composition = Composition(
                 applier = ApplicationApplier,
                 parent = recomposer
@@ -142,55 +163,61 @@ public suspend fun awaitApplication(
                 }
             }
 
-            Logger.v { "Setting initial composition content" }
+            logger.v { "Setting initial composition content" }
             try {
                 composition.setContent @Composable {
                     if (isOpen) {
-                        Logger.v("Mounting compose tree onto Application(id=${applicationId})")
+                        logger.v("Mounting compose tree onto Application(id=${applicationId})")
                         CompositionLocalProvider(
                             LocalApplication provides application,
+                            LocalLogger provides logger,
                         ) {
                             scope.content()
                         }
                     } else {
-                        Logger.v("Unounting compose tree from Application(id=${applicationId})")
+                        logger.v("Unounting compose tree from Application(id=${applicationId})")
                     }
                 }
             } catch (e: Throwable) {
-                Logger.e(e) { "Composition failed" }
+                logger.e(e) { "Composition failed" }
             }
 
-            Logger.v { "Scheduling recomposer cleanup job" }
+            logger.v { "Scheduling recomposer cleanup job" }
             CoroutineScope(context).launch(start = CoroutineStart.DEFAULT) {
                 try {
-                    Logger.v { "Closing recomposer" }
+                    logger.v { "Closing recomposer" }
                     recomposer.close()
-                    Logger.v { "Joining recomposer" }
+                    logger.v { "Joining recomposer" }
                     recomposer.join()
                 } catch (e: Throwable) {
-                    Logger.e(e) { "Closing recomposer failed" }
+                    logger.e(e) { "Closing recomposer failed" }
                 }
-                Logger.v { "Disposing composition" }
+                logger.v { "Disposing composition" }
                 composition.dispose()
-                Logger.d { "Recomposer closed, quitting application" }
+                logger.d { "Recomposer closed, quitting application" }
                 application.quit()
             }
-            Logger.v { "Finished activating Application($applicationId)" }
+            logger.v { "Finished activating Application($applicationId)" }
         }
     }
 
-    Logger.v { "Connecting shutdown signal" }
+    logger.v { "Connecting shutdown signal" }
     application.connectShutdown {
-        Logger.d { "Processing GTK shutdown request" }
-        Logger.v { "Cancelling MainUiDispatcher" }
+        logger.d { "Processing GTK shutdown request" }
+        logger.v { "Cancelling MainUiDispatcher" }
         MainUiDispatcher.cancel()
         MainUiThread.cancel()
     }
 
-    Logger.d { "Starting GTK Application(id=${applicationId})" }
+    logger.d { "Starting GTK Application(id=${applicationId})" }
     return@withContext application.run(args.size, args.toList()).also {
-        Logger.d { "GTK Application(id=${applicationId}) exited with $it" }
-
+        logger.d { "GTK Application(id=${applicationId}) exited with $it" }
+        logger.v { "VERBOSE" }
+        logger.d { "DEBUG" }
+        logger.i { "INFO" }
+        logger.w { "WARNING" }
+        logger.e { "ERROR" }
+        logger.a { "ASSERT" }
     }
 }
 
