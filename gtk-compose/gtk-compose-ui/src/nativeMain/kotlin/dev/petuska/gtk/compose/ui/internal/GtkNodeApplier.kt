@@ -24,6 +24,7 @@ internal class GtkNodeApplier(
         if (parent is GtkContainerNode) {
             logger.d { "[$parent] Inserting child $instance at $index" }
             parent.insert(index, instance)
+            logger.v { "[$parent] Inserted child $instance at $index" }
         } else {
             logger.e { "[$parent] Trying to insert $instance to non-container node at index $index" }
         }
@@ -37,6 +38,7 @@ internal class GtkNodeApplier(
         if (parent is GtkContainerNode) {
             logger.d { "[$parent] Removing $count children at $index" }
             parent.remove(index, count)
+            logger.v { "[$parent] Removed $count children at $index" }
         } else {
             logger.e { "[$parent] Trying to remove $count children at index $index from non-container node" }
         }
@@ -50,6 +52,7 @@ internal class GtkNodeApplier(
         if (parent is GtkContainerNode) {
             logger.d { "[$parent] Moving $count children from $from to $to" }
             parent.move(from, to, count)
+            logger.v { "[$parent] Moved $count children from $from to $to" }
         } else {
             logger.e { "[$parent] Trying to move $count children from $from to $to within non-container node" }
         }
@@ -58,8 +61,9 @@ internal class GtkNodeApplier(
     override fun onClear() {
         val parent = root
         if (parent is GtkContainerNode) {
-            logger.i { "[$parent] Clearing children" }
+            logger.d { "[$parent] Clearing children" }
             parent.clear()
+            logger.v { "[$parent] Cleared children" }
         } else {
             logger.e { "[$parent] Trying to clear children of non-container node" }
         }

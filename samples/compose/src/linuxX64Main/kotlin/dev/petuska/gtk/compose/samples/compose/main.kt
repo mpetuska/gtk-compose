@@ -1,13 +1,13 @@
 package dev.petuska.gtk.compose.samples.compose
 
 import androidx.compose.runtime.*
-import dev.petuska.gtk.compose.foundation.Box
 import dev.petuska.gtk.compose.foundation.Button
+import dev.petuska.gtk.compose.foundation.HBox
 import dev.petuska.gtk.compose.foundation.Label
+import dev.petuska.gtk.compose.foundation.VBox
 import dev.petuska.gtk.compose.ui.application
 import dev.petuska.gtk.compose.ui.platform.LocalApplication
 import dev.petuska.gtk.compose.ui.window.ApplicationWindow
-import kotlinx.coroutines.delay
 import org.gtkkn.bindings.gio.Settings
 import org.gtkkn.bindings.gtk.Application
 import org.gtkkn.bindings.gtk.ApplicationWindow
@@ -17,40 +17,27 @@ import org.gtkkn.bindings.gtk.Orientation
 private const val APP_ID = "dev.petuska.gtk.compose.samples.compose"
 fun main(vararg args: String) {
     application(APP_ID, args = args.toList()) {
-        var visible by remember { mutableStateOf(false) }
-        var title by remember { mutableStateOf<String?>(null) }
         val application = LocalApplication.current
         SideEffect {
             application.setAccelsForAction("win.close", listOf("<Ctrl>W"))
         }
 
-        LaunchedEffect(Unit) {
-            repeat(5) {
-                println("Launching window in ${5 - it}s")
-                delay(1000)
-            }
-            visible = true
-            println("Window launched $visible")
-        }
-        LaunchedEffect(visible) {
-            repeat(5) {
-                println("Changing window title in ${5 - it}s")
-                delay(1000)
-            }
-            title = if (visible) {
-                "GTK Compose"
-            } else {
-                "Hidden"
-            }
-            println("Window title changed: $title")
-        }
-
-        ApplicationWindow(visible = visible, title = title) {
-            Box {
+        ApplicationWindow(visible = true, title = "GTK Compose") {
+            HBox(spacing = 3) {
+                var extraWindow by remember { mutableStateOf(false) }
                 Button(
-                    onClick = { visible = false }
+                    onClick = {
+                        println("Toggling extra $extraWindow")
+                        extraWindow = !extraWindow
+                    }
                 ) {
-                    Label("Hide")
+                    if (extraWindow) {
+                        println("Extra true")
+                        Label("Close Window")
+                    } else {
+                        println("Extra false")
+                        Label("Open Window")
+                    }
                 }
                 TodoWindow()
             }
@@ -80,7 +67,7 @@ private fun buildApplicationWindow(application: Application): ApplicationWindow 
 
 @Composable
 private fun TodoWindow() {
-    Box {
+    VBox(spacing = 2) {
         val labels = remember { mutableStateListOf("GTK", "Compose", "Super", "Awesome!") }
 
         labels.forEach {

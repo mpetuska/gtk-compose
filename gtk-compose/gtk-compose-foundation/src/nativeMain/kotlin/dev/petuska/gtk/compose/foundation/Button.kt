@@ -27,12 +27,10 @@ public fun Button(
     @OptIn(GtkComposeInternalApi::class)
     GtkParentNode(
         update = {
-            set(onClick) { widget.connectClicked(handler = onClick) }
+            set(onClick) { println("Connecting clicked"); widget.connectClicked(handler = onClick) }
         },
         child = child
     ) {
-        ButtonNode(Button().apply {
-            connectClicked(handler = onClick)
-        })
+        ButtonNode(Button())
     }
 }

@@ -27,7 +27,7 @@ public abstract class GtkParentNode<out TWidget : Widget> : GtkContainerNode<TWi
     }
 
     public final override fun remove(index: Int, count: Int) {
-        if (child != null) {
+        if (index == 0 && child != null) {
             clear()
             child = null
         }

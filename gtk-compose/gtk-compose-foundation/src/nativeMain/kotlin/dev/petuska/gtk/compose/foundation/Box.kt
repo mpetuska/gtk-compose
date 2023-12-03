@@ -14,21 +14,15 @@ private class BoxNode(override val widget: Box) : GtkContainerNode<Box>() {
     private val children = mutableListOf<GtkNode<Widget>>()
 
     override fun insert(index: Int, instance: GtkNode<Widget>) {
-//        val length = children.size
-//        if (index == 0) {
-//            println("Prepending")
-//            widget.prepend(child = instance.widget)
-//        } else if (index < length) {
-//            println("Inserting")
-//            val after = children[index - 1]
-//            widget.insertChildAfter(child = instance.widget, sibling = after.widget)
-//        } else {
-//            println("Appending")
-//            widget.append(child = instance.widget)
-//        }
-
-        val after = children.getOrNull(index - 1)
-        widget.insertChildAfter(child = instance.widget, sibling = after?.widget)
+        val length = children.size
+        if (index == 0) {
+            widget.prepend(child = instance.widget)
+        } else if (index < length) {
+            val after = children[index - 1]
+            widget.insertChildAfter(child = instance.widget, sibling = after.widget)
+        } else {
+            widget.append(child = instance.widget)
+        }
         children.add(index = index, element = instance)
     }
 
@@ -37,40 +31,61 @@ private class BoxNode(override val widget: Box) : GtkContainerNode<Box>() {
             widget.remove(child = children.removeAt(index).widget)
         }
     }
-
-    override fun move(from: Int, to: Int, count: Int) {
-        if (from == to) {
-            return // nothing to do
-        }
-
-        for (i in 0 until count) {
-            // if "from" is after "to," the from index moves because we're inserting before it
-            val fromIndex = if (from > to) from + i else from
-            val toIndex = if (from > to) to + i else to + count - 2
-
-
-            val child = children[fromIndex]
-            remove(fromIndex, 1)
-            insert(toIndex, child)
-        }
-    }
-
-    override fun clear() {
-        children.reversed().forEach {
-            widget.remove(child = it.widget)
-        }
-    }
-
 }
 
 @Composable
-public fun Box(
-//    attrs: AttrBuilderContext<HTMLDivElement>? = null,
+private fun Box(
+    orientation: Orientation,
+    spacing: Int,
+    homogeneous: Boolean,
     content: ContentBuilder<Box>
 ) {
     @OptIn(GtkComposeInternalApi::class)
-    GtkContainerNode(update = {}, content = content) {
-        val widget = Box(Orientation.VERTICAL, 0)
+    GtkContainerNode(update = {
+        set(spacing) { widget.spacing = it }
+        set(homogeneous) { widget.homogeneous = it }
+    }, content = content) {
+        val widget = Box(orientation, spacing)
         BoxNode(widget)
     }
+}
+
+/**
+ * A container that spreads its children vertically
+ * @param spacing [Box.spacing]
+ * @param homogeneous [Box.homogeneous]
+ *
+ * @see Box
+ * @see Orientation.VERTICAL
+ */
+@Composable
+public fun VBox(
+    spacing: Int,
+    homogeneous: Boolean = true,
+    content: ContentBuilder<Box>
+) {
+    Box(
+        orientation = Orientation.VERTICAL,
+        spacing = spacing, homogeneous = homogeneous, content = content
+    )
+}
+
+/**
+ * A container that spreads its children horizontally
+ * @param spacing [Box.spacing]
+ * @param homogeneous [Box.homogeneous]
+ *
+ * @see Box
+ * @see Orientation.HORIZONTAL
+ */
+@Composable
+public fun HBox(
+    spacing: Int,
+    homogeneous: Boolean = true,
+    content: ContentBuilder<Box>
+) {
+    Box(
+        orientation = Orientation.HORIZONTAL,
+        spacing = spacing, homogeneous = homogeneous, content = content
+    )
 }

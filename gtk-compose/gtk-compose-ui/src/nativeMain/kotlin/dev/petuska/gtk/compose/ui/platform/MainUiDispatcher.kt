@@ -9,7 +9,7 @@ import kotlin.coroutines.CoroutineContext
  * Dedicated thread to bootstrap GTK. After bootstrapping,
  * GTK is meant to fully own the thread and as such no work on it should block the thread nor be executed directly.
  *
- * To interract with GTK on the main thread use [MainUiDispatcher]
+ * To interact with GTK on the main thread use [MainUiDispatcher]
  *
  * @see MainUiDispatcher
  * @see Dispatchers.Main

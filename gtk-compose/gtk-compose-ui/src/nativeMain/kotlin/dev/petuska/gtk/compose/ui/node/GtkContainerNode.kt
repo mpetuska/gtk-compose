@@ -14,13 +14,32 @@ public typealias AnyGtkContainerNode = GtkContainerNode<Widget>
  */
 @GtkComposeInternalApi
 public abstract class GtkContainerNode<out TWidget : Widget> : GtkNode<TWidget>() {
+    private val children = mutableListOf<AnyGtkNode>()
+
     public abstract fun insert(index: Int, instance: AnyGtkNode)
 
     public abstract fun remove(index: Int, count: Int)
 
-    public abstract fun move(from: Int, to: Int, count: Int)
+    public open fun move(from: Int, to: Int, count: Int) {
+        if (from == to) {
+            return // nothing to do
+        }
 
-    public abstract fun clear()
+        for (i in 0 until count) {
+            // if "from" is after "to," the from index moves because we're inserting before it
+            val fromIndex = if (from > to) from + i else from
+            val toIndex = if (from > to) to + i else to + count - 2
+
+
+            val child = children[fromIndex]
+            remove(fromIndex, 1)
+            insert(toIndex, child)
+        }
+    }
+
+    public open fun clear() {
+        remove(0, children.size)
+    }
 }
 
 /**
