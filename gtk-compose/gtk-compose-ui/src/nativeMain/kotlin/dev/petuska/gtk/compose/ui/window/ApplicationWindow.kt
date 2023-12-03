@@ -10,16 +10,7 @@ import org.gtkkn.bindings.gtk.Window
 @GtkComposeInternalApi
 public open class ApplicationWindowNode(
     override val widget: ApplicationWindow
-) : WindowNode<ApplicationWindow>(widget) {
-
-    override fun add(child: Widget) {
-        widget.child = child
-    }
-
-    override fun clear() {
-        widget.child = null
-    }
-}
+) : WindowNode<ApplicationWindow>(widget)
 
 @Composable
 public fun ApplicationWindow(

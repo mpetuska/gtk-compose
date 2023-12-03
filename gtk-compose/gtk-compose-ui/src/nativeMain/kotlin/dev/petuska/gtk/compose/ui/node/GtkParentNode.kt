@@ -37,17 +37,3 @@ public abstract class GtkParentNode<out TWidget : Widget> : GtkContainerNode<TWi
         // noop
     }
 }
-
-@Composable
-@GtkComposeInternalApi
-public inline fun <TWidget : Widget, TNode : GtkParentNode<TWidget>> GtkParentNode(
-    update: @DisallowComposableCalls Updater<TNode>.() -> Unit,
-    crossinline child: ContentBuilder<TWidget>,
-    noinline factory: () -> TNode,
-) {
-    GtkContainerNode(
-        factory = factory,
-        update = update,
-        content = child,
-    )
-}

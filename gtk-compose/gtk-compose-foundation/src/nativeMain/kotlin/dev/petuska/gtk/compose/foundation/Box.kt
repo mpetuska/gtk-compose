@@ -34,18 +34,21 @@ private class BoxNode(override val widget: Box) : GtkContainerNode<Box>() {
 }
 
 @Composable
-private fun Box(
+private inline fun Box(
     orientation: Orientation,
     spacing: Int,
     homogeneous: Boolean,
-    content: ContentBuilder<Box>
+    crossinline content: ContentBuilder<Box>
 ) {
     @OptIn(GtkComposeInternalApi::class)
-    GtkContainerNode(update = {
-        set(spacing) { widget.spacing = it }
-        set(homogeneous) { widget.homogeneous = it }
-    }, content = content) {
-        val widget = Box(orientation, spacing)
+    GtkNode(
+        update = {
+            set(spacing) { widget.spacing = it }
+            set(homogeneous) { widget.homogeneous = it }
+        },
+        content = content
+    ) {
+        val widget = Box(orientation, spacing).also { println(">>>>>>>>>>>>>>>> ${it.homogeneous}") }
         BoxNode(widget)
     }
 }
@@ -61,7 +64,7 @@ private fun Box(
 @Composable
 public fun VBox(
     spacing: Int,
-    homogeneous: Boolean = true,
+    homogeneous: Boolean = false,
     content: ContentBuilder<Box>
 ) {
     Box(
@@ -81,7 +84,7 @@ public fun VBox(
 @Composable
 public fun HBox(
     spacing: Int,
-    homogeneous: Boolean = true,
+    homogeneous: Boolean = false,
     content: ContentBuilder<Box>
 ) {
     Box(

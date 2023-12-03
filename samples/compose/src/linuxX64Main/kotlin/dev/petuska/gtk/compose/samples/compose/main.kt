@@ -8,6 +8,7 @@ import dev.petuska.gtk.compose.foundation.VBox
 import dev.petuska.gtk.compose.ui.application
 import dev.petuska.gtk.compose.ui.platform.LocalApplication
 import dev.petuska.gtk.compose.ui.window.ApplicationWindow
+import dev.petuska.gtk.compose.ui.window.Window
 import org.gtkkn.bindings.gio.Settings
 import org.gtkkn.bindings.gtk.Application
 import org.gtkkn.bindings.gtk.ApplicationWindow
@@ -31,12 +32,11 @@ fun main(vararg args: String) {
                         extraWindow = !extraWindow
                     }
                 ) {
-                    if (extraWindow) {
-                        println("Extra true")
-                        Label("Close Window")
-                    } else {
-                        println("Extra false")
-                        Label("Open Window")
+                    Label(text = if (extraWindow) "Close Window" else "Open Window")
+                }
+                if (extraWindow) {
+                    Window(visible = true, title = "Extra") {
+                        Label("Extra Window")
                     }
                 }
                 TodoWindow()

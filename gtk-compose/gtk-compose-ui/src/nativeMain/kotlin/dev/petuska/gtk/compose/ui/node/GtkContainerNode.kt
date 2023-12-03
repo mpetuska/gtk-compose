@@ -1,6 +1,7 @@
 package dev.petuska.gtk.compose.ui.node
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composition
+import androidx.compose.runtime.CompositionContext
 import co.touchlab.kermit.Logger
 import dev.petuska.gtk.compose.ui.internal.GtkComposeInternalApi
 import dev.petuska.gtk.compose.ui.internal.GtkNodeApplier
@@ -58,18 +59,4 @@ public fun <TWidget : Widget> GtkContainerNode<TWidget>.setContent(
         scope.content()
     }
     return composition
-}
-
-@Composable
-@GtkComposeInternalApi
-public inline fun <TWidget : Widget, TNode : GtkContainerNode<TWidget>> GtkContainerNode(
-    update: @DisallowComposableCalls Updater<TNode>.() -> Unit,
-    crossinline content: ContentBuilder<TWidget>,
-    noinline factory: () -> TNode,
-) {
-    GtkNode(
-        factory = factory,
-        update = update,
-        content = content,
-    )
 }
