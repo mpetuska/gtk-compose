@@ -20,5 +20,9 @@ kotlin {
                 api(project(":gtk-compose:gtk-compose-ui"))
             }
         }
+
+        configureEach {
+            languageSettings.optIn("dev.petuska.gtk.compose.ui.internal.GtkComposeInternalApi")
+        }
     }
 }

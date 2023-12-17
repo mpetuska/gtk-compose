@@ -1,14 +1,12 @@
 package dev.petuska.gtk.compose.samples.compose
 
 import androidx.compose.runtime.*
-import dev.petuska.gtk.compose.foundation.Button
-import dev.petuska.gtk.compose.foundation.HBox
-import dev.petuska.gtk.compose.foundation.Label
-import dev.petuska.gtk.compose.foundation.VBox
+import dev.petuska.gtk.compose.foundation.*
 import dev.petuska.gtk.compose.ui.application
 import dev.petuska.gtk.compose.ui.platform.LocalApplication
 import dev.petuska.gtk.compose.ui.window.ApplicationWindow
-import dev.petuska.gtk.compose.ui.window.Window
+import dev.petuska.gtk.compose.ui.window.showMenubar
+import dev.petuska.gtk.compose.ui.window.title
 import org.gtkkn.bindings.gio.Settings
 import org.gtkkn.bindings.gtk.Application
 import org.gtkkn.bindings.gtk.ApplicationWindow
@@ -23,20 +21,37 @@ fun main(vararg args: String) {
             application.setAccelsForAction("win.close", listOf("<Ctrl>W"))
         }
 
-        ApplicationWindow(visible = true, title = "GTK Compose") {
-            HBox(spacing = 3) {
+        ApplicationWindow(
+            visible = true,
+            onCloseRequest = ::exitApplication,
+            props = {
+                title = "GTK Compose"
+            },
+        ) {
+            HBox(props = {
+                spacing = 3
+            }) {
                 var extraWindow by remember { mutableStateOf(false) }
                 Button(
-                    onClick = {
-                        println("Toggling extra $extraWindow")
-                        extraWindow = !extraWindow
+                    props = {
+                        onClick = {
+                            println("Toggling extra $extraWindow")
+                            extraWindow = !extraWindow
+                        }
                     }
                 ) {
                     Label(text = if (extraWindow) "Close Window" else "Open Window")
                 }
                 if (extraWindow) {
-                    Window(visible = true, title = "Extra") {
-                        Label("Extra Window")
+                    ApplicationWindow(
+                        visible = true,
+                        onCloseRequest = { extraWindow = false },
+                        props = {
+                            title = "Extra"
+                            showMenubar = true
+                        }
+                    ) {
+                        TodoWindow()
                     }
                 }
                 TodoWindow()
@@ -67,18 +82,24 @@ private fun buildApplicationWindow(application: Application): ApplicationWindow 
 
 @Composable
 private fun TodoWindow() {
-    VBox(spacing = 2) {
+    VBox(props = {
+        spacing = 2
+    }) {
         val labels = remember { mutableStateListOf("GTK", "Compose", "Super", "Awesome!") }
 
         labels.forEach {
-            Button(onClick = {
-                println("Clicked $it")
-                labels.remove(it)
+            Button(props = {
+                onClick = {
+                    println("Clicked $it")
+                    labels.remove(it)
+                }
             }) { Label(it) }
         }
-        Button(onClick = {
-            println("Clicked More!")
-            labels.add("Another one")
+        Button(props = {
+            onClick = {
+                println("Clicked More!")
+                labels.add("Another one")
+            }
         }) { Label("More!") }
     }
 }

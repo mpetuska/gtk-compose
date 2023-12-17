@@ -5,6 +5,9 @@ import dev.petuska.gtk.compose.ui.internal.GtkComposeInternalApi
 import dev.petuska.gtk.compose.ui.node.ContentBuilder
 import dev.petuska.gtk.compose.ui.node.GtkNode
 import dev.petuska.gtk.compose.ui.node.GtkParentNode
+import dev.petuska.gtk.compose.ui.props.PropsBuilder
+import dev.petuska.gtk.compose.ui.props.PropsScope
+import dev.petuska.gtk.compose.ui.props.prop
 import org.gtkkn.bindings.gtk.Button
 import org.gtkkn.bindings.gtk.Widget
 
@@ -19,16 +22,16 @@ private class ButtonNode(override val widget: Button) : GtkParentNode<Button>() 
     }
 }
 
+public var PropsScope<out Button>.onClick: () -> Unit by prop { widget.connectClicked(handler = it) }
+
+
 @Composable
 public fun Button(
-    onClick: () -> Unit = {},
+    props: PropsBuilder<Button>,
     child: ContentBuilder<Button>
 ) {
-    @OptIn(GtkComposeInternalApi::class)
     GtkNode(
-        update = {
-            set(onClick) { println("Connecting clicked"); widget.connectClicked(handler = onClick) }
-        },
+        props = props,
         content = child
     ) {
         ButtonNode(Button())

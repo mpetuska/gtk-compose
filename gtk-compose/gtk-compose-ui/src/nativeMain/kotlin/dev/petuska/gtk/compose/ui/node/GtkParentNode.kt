@@ -1,8 +1,5 @@
 package dev.petuska.gtk.compose.ui.node
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisallowComposableCalls
-import androidx.compose.runtime.Updater
 import dev.petuska.gtk.compose.ui.internal.GtkComposeInternalApi
 import org.gtkkn.bindings.gtk.Widget
 

@@ -1,9 +1,9 @@
 package dev.petuska.gtk.compose.ui.node
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisallowComposableCalls
-import androidx.compose.runtime.Updater
+import androidx.compose.runtime.SkippableUpdater
 import dev.petuska.gtk.compose.ui.internal.GtkComposeInternalApi
+import dev.petuska.gtk.compose.ui.props.PropsBuilder
 import org.gtkkn.bindings.gtk.Widget
 
 @GtkComposeInternalApi
@@ -11,15 +11,3 @@ public typealias AnyGtkElementNode = GtkElementNode<Widget>
 
 @GtkComposeInternalApi
 public abstract class GtkElementNode<out TWidget : Widget> : GtkNode<TWidget>()
-
-@Composable
-@GtkComposeInternalApi
-public inline fun <TWidget : Widget, TNode : GtkElementNode<TWidget>> GtkElementNode(
-    update: @DisallowComposableCalls Updater<TNode>.() -> Unit,
-    noinline factory: () -> TNode
-) {
-    GtkNode(
-        factory = factory,
-        update = update,
-    )
-}

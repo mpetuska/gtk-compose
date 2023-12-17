@@ -3,28 +3,33 @@ package dev.petuska.gtk.compose.ui.window
 import androidx.compose.runtime.Composable
 import dev.petuska.gtk.compose.ui.internal.GtkComposeInternalApi
 import dev.petuska.gtk.compose.ui.node.ContentBuilder
+import dev.petuska.gtk.compose.ui.props.PropsScope
+import dev.petuska.gtk.compose.ui.props.prop
 import org.gtkkn.bindings.gtk.ApplicationWindow
-import org.gtkkn.bindings.gtk.Widget
 import org.gtkkn.bindings.gtk.Window
 
 @GtkComposeInternalApi
-public open class ApplicationWindowNode(
+private class ApplicationWindowNode(
     override val widget: ApplicationWindow
 ) : WindowNode<ApplicationWindow>(widget)
 
+public var PropsScope<out ApplicationWindow>.showMenubar: Boolean by prop { widget.showMenubar = it }
+
 @Composable
 public fun ApplicationWindow(
+    onCloseRequest: () -> Unit,
     visible: Boolean,
-    title: String? = null,
+    props: PropsScope<ApplicationWindow>.() -> Unit,
     child: ContentBuilder<Window>
 ) {
     Window(
+        onCloseRequest = onCloseRequest,
         visible = visible,
-        title = title,
         create = { application ->
             ApplicationWindowNode(ApplicationWindow(application))
         },
-        update = {},
+        dispose = {},
+        props = props,
         child = child,
     )
 }

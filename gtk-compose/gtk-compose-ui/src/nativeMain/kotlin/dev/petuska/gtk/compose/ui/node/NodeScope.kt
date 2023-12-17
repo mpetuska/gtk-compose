@@ -5,9 +5,14 @@ import androidx.compose.runtime.DisposableEffectScope
 import dev.petuska.gtk.compose.ui.internal.GtkComposeInternalApi
 import org.gtkkn.bindings.gtk.Widget
 
-public typealias ScopedBuilder<TScope> = @Composable TScope.() -> Unit
-public typealias ContentBuilder<TWidget> = ScopedBuilder<ContainerScope<TWidget>>
+@DslMarker
+public annotation class GtkComposeNodeScope
 
+public typealias Builder<TScope> = TScope.() -> Unit
+public typealias ComposableBuilder<TScope> = @Composable Builder<TScope>
+public typealias ContentBuilder<TWidget> = ComposableBuilder<ContainerScope<TWidget>>
+
+@GtkComposeNodeScope
 public sealed interface NodeScope<out TWidget : Widget> {
     /**
      * Reference to a native GTK [Widget] this node is managing
@@ -25,8 +30,14 @@ public interface ContainerScope<out TWidget : Widget> : NodeScope<TWidget>
  */
 @GtkComposeInternalApi
 public class LazyNodeScope<TWidget : Widget> : ElementScope<TWidget>, ContainerScope<TWidget> {
+    internal var _node: GtkNode<TWidget>? = null
+
     @PublishedApi
-    internal lateinit var node: GtkNode<TWidget>
+    internal var node: GtkNode<TWidget>
+        get() = _node ?: error("Accessing node before it is initialised")
+        set(value) {
+            _node = value
+        }
 
     override val DisposableEffectScope.scopeElement: TWidget
         get() = node.widget
@@ -44,6 +55,9 @@ public class StaticNodeScope<TWidget : Widget>(
         get() = node.widget
 }
 
+/**
+ * Wraps a nullable [ContentBuilder] into potentially noop non-nullable [ContentBuilder]
+ */
 @GtkComposeInternalApi
 public inline fun <TWidget : Widget> ContentBuilder<TWidget>?.wrap(): ContentBuilder<TWidget> =
     { this@wrap?.invoke(this) }

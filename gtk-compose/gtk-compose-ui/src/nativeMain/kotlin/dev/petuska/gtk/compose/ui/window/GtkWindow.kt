@@ -1,6 +1,7 @@
 package dev.petuska.gtk.compose.ui.window
 
 import androidx.compose.runtime.*
+import dev.petuska.gtk.compose.ui.node.GtkContainerNode
 import dev.petuska.gtk.compose.ui.platform.MainUiDispatcher
 import dev.petuska.gtk.compose.ui.platform.rememberLogger
 import dev.petuska.gtk.compose.ui.util.Ref
@@ -37,9 +38,8 @@ import org.gtkkn.bindings.gtk.Window
  * @param update The callback to be invoked after the layout is inflated.
  */
 @OptIn(DelicateCoroutinesApi::class)
-@Suppress("unused")
 @Composable
-public fun <TNode : WindowNode<*>> GtkWindow(
+internal fun <TNode : GtkContainerNode<Window>> GtkWindow(
     visible: Boolean = true,
     create: () -> TNode,
     dispose: (TNode) -> Unit,
@@ -53,9 +53,7 @@ public fun <TNode : WindowNode<*>> GtkWindow(
     DisposableEffect(Unit) {
         windowRef.value = create()
         onDispose {
-            val win = window()
-            dispose(win)
-            win.widget.close()
+            dispose(window())
         }
     }
 

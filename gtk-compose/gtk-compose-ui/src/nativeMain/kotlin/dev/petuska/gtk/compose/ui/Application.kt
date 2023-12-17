@@ -159,6 +159,7 @@ public suspend fun awaitApplication(
             var isOpen by mutableStateOf(true)
             val scope = object : ApplicationScope {
                 override fun exitApplication() {
+                    logger.d { "Exiting application" }
                     isOpen = false
                 }
             }

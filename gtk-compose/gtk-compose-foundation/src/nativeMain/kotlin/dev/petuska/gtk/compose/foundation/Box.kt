@@ -5,6 +5,9 @@ import dev.petuska.gtk.compose.ui.internal.GtkComposeInternalApi
 import dev.petuska.gtk.compose.ui.node.ContentBuilder
 import dev.petuska.gtk.compose.ui.node.GtkContainerNode
 import dev.petuska.gtk.compose.ui.node.GtkNode
+import dev.petuska.gtk.compose.ui.props.PropsBuilder
+import dev.petuska.gtk.compose.ui.props.PropsScope
+import dev.petuska.gtk.compose.ui.props.prop
 import org.gtkkn.bindings.gtk.Box
 import org.gtkkn.bindings.gtk.Orientation
 import org.gtkkn.bindings.gtk.Widget
@@ -33,62 +36,61 @@ private class BoxNode(override val widget: Box) : GtkContainerNode<Box>() {
     }
 }
 
+/**
+ * @see Box.spacing
+ */
+public var PropsScope<out Box>.spacing: Int by prop { widget.spacing = it }
+
+/**
+ * @see Box.homogeneous
+ */
+public var PropsScope<out Box>.homogeneous: Boolean by prop { widget.homogeneous = it }
+
 @Composable
-private inline fun Box(
+private fun Box(
     orientation: Orientation,
-    spacing: Int,
-    homogeneous: Boolean,
-    crossinline content: ContentBuilder<Box>
+    props: PropsBuilder<Box>,
+    content: ContentBuilder<Box>
 ) {
-    @OptIn(GtkComposeInternalApi::class)
     GtkNode(
-        update = {
-            set(spacing) { widget.spacing = it }
-            set(homogeneous) { widget.homogeneous = it }
-        },
+        props = props,
         content = content
     ) {
-        val widget = Box(orientation, spacing).also { println(">>>>>>>>>>>>>>>> ${it.homogeneous}") }
+        val widget = Box(orientation, 0)
         BoxNode(widget)
     }
 }
 
 /**
  * A container that spreads its children vertically
- * @param spacing [Box.spacing]
- * @param homogeneous [Box.homogeneous]
- *
  * @see Box
  * @see Orientation.VERTICAL
  */
 @Composable
 public fun VBox(
-    spacing: Int,
-    homogeneous: Boolean = false,
-    content: ContentBuilder<Box>
+    props: PropsBuilder<Box>,
+    content: ContentBuilder<Box>,
 ) {
     Box(
         orientation = Orientation.VERTICAL,
-        spacing = spacing, homogeneous = homogeneous, content = content
+        props = props,
+        content = content
     )
 }
 
 /**
  * A container that spreads its children horizontally
- * @param spacing [Box.spacing]
- * @param homogeneous [Box.homogeneous]
- *
  * @see Box
  * @see Orientation.HORIZONTAL
  */
 @Composable
 public fun HBox(
-    spacing: Int,
-    homogeneous: Boolean = false,
-    content: ContentBuilder<Box>
+    props: PropsBuilder<Box>,
+    content: ContentBuilder<Box>,
 ) {
     Box(
         orientation = Orientation.HORIZONTAL,
-        spacing = spacing, homogeneous = homogeneous, content = content
+        props = props,
+        content = content
     )
 }
