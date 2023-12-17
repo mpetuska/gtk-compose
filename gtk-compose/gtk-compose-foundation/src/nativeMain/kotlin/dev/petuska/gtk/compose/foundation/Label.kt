@@ -6,17 +6,20 @@ import dev.petuska.gtk.compose.ui.node.GtkElementNode
 import dev.petuska.gtk.compose.ui.node.GtkNode
 import dev.petuska.gtk.compose.ui.props.PropsBuilder
 import dev.petuska.gtk.compose.ui.props.PropsScope
-import dev.petuska.gtk.compose.ui.props.prop
+import dev.petuska.gtk.compose.ui.props.getValue
+import dev.petuska.gtk.compose.ui.props.setValue
 import org.gtkkn.bindings.gtk.Label
 
 @GtkComposeInternalApi
 private class LabelNode(override val widget: Label) : GtkElementNode<Label>() {
 }
 
+// region properties
 /**
  * @see Label.label
  */
-public var PropsScope<out Label>.label: String by prop { widget.label = it }
+public var PropsScope<out Label>.label: String by Label::label
+// endregion
 
 @Composable
 public fun Label(

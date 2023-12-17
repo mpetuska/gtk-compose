@@ -30,14 +30,8 @@ public interface ContainerScope<out TWidget : Widget> : NodeScope<TWidget>
  */
 @GtkComposeInternalApi
 public class LazyNodeScope<TWidget : Widget> : ElementScope<TWidget>, ContainerScope<TWidget> {
-    internal var _node: GtkNode<TWidget>? = null
-
     @PublishedApi
-    internal var node: GtkNode<TWidget>
-        get() = _node ?: error("Accessing node before it is initialised")
-        set(value) {
-            _node = value
-        }
+    internal lateinit var node: GtkNode<TWidget>
 
     override val DisposableEffectScope.scopeElement: TWidget
         get() = node.widget

@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import dev.petuska.gtk.compose.foundation.*
 import dev.petuska.gtk.compose.ui.application
 import dev.petuska.gtk.compose.ui.platform.LocalApplication
+import dev.petuska.gtk.compose.ui.props.onShow
 import dev.petuska.gtk.compose.ui.window.ApplicationWindow
 import dev.petuska.gtk.compose.ui.window.showMenubar
 import dev.petuska.gtk.compose.ui.window.title

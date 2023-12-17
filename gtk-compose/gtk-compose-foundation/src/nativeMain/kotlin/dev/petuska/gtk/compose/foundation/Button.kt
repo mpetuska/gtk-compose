@@ -7,7 +7,7 @@ import dev.petuska.gtk.compose.ui.node.GtkNode
 import dev.petuska.gtk.compose.ui.node.GtkParentNode
 import dev.petuska.gtk.compose.ui.props.PropsBuilder
 import dev.petuska.gtk.compose.ui.props.PropsScope
-import dev.petuska.gtk.compose.ui.props.prop
+import dev.petuska.gtk.compose.ui.props.signal
 import org.gtkkn.bindings.gtk.Button
 import org.gtkkn.bindings.gtk.Widget
 
@@ -22,8 +22,17 @@ private class ButtonNode(override val widget: Button) : GtkParentNode<Button>() 
     }
 }
 
-public var PropsScope<out Button>.onClick: () -> Unit by prop { widget.connectClicked(handler = it) }
+// region signals
+/**
+ * @see Button.connectClicked
+ */
+public var PropsScope<out Button>.onClick: () -> Unit by signal { widget.connectClicked(handler = it) }
 
+/**
+ * @see Button.connectActivate
+ */
+public var PropsScope<out Button>.onActivate: () -> Unit by signal { widget.connectActivate(handler = it) }
+// endregion
 
 @Composable
 public fun Button(
