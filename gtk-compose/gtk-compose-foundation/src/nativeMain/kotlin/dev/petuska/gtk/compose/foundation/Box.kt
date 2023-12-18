@@ -5,7 +5,11 @@ import dev.petuska.gtk.compose.ui.internal.GtkComposeInternalApi
 import dev.petuska.gtk.compose.ui.node.ContentBuilder
 import dev.petuska.gtk.compose.ui.node.GtkContainerNode
 import dev.petuska.gtk.compose.ui.node.GtkNode
-import dev.petuska.gtk.compose.ui.props.*
+import dev.petuska.gtk.compose.ui.props.PropsBuilder
+import dev.petuska.gtk.compose.ui.props.PropsScope
+import dev.petuska.gtk.compose.ui.props.getValue
+import dev.petuska.gtk.compose.ui.props.setValue
+import org.gtkkn.bindings.gtk.BaselinePosition
 import org.gtkkn.bindings.gtk.Box
 import org.gtkkn.bindings.gtk.Orientation
 import org.gtkkn.bindings.gtk.Widget
@@ -36,14 +40,24 @@ private class BoxNode(override val widget: Box) : GtkContainerNode<Box>() {
 
 // region properties
 /**
- * @see Box.spacing
+ * @see Box.baselineChild
  */
-public var PropsScope<out Box>.spacing: Int by Box::spacing
+public var PropsScope<out Box>.baselineChild: Int by Box::baselineChild
+
+/**
+ * @see Box.baselinePosition
+ */
+public var PropsScope<out Box>.baselinePosition: BaselinePosition by Box::baselinePosition
 
 /**
  * @see Box.homogeneous
  */
 public var PropsScope<out Box>.homogeneous: Boolean by Box::homogeneous
+
+/**
+ * @see Box.spacing
+ */
+public var PropsScope<out Box>.spacing: Int by Box::spacing
 // endregion
 
 @Composable
